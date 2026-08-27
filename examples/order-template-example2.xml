@@ -1,0 +1,167 @@
+<orders>
+	<order>
+		<id>13210</id>
+		<data>14.07.2026</data>
+		<suma>153,42</suma>
+		<dostavka>0,00</dostavka>
+		<total>153,42</total>
+		<nachin>Банков път</nachin>
+		<paid>Неплатена</paid>
+		<status>Необработена</status>
+		<info/>
+		<products>
+			<product>
+				<productid>3485</productid>
+				<kod>ТЛС62261</kod>
+				<ime>Колан с тресчотка 38mm x 6m TOLSEN </ime>
+				<broi>5</broi>
+				<cena>7,82</cena>
+				<zadraskanacena>11,17</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>39,09</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2160</productid>
+				<kod>ТЛС30051</kod>
+				<ime>Ножовка 150 mm TOLSEN </ime>
+				<broi>2</broi>
+				<cena>1,87</cena>
+				<zadraskanacena>2,67</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>3,73</stoinostbezdds>
+			</product>
+			<product>
+				<productid>4649</productid>
+				<kod>ТЛС50100</kod>
+				<ime>СПИРАЛА 3 М</ime>
+				<broi>3</broi>
+				<cena>2,10</cena>
+				<zadraskanacena>3,00</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>6,30</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2318</productid>
+				<kod>ТЛС30045</kod>
+				<ime>Ножица кухненска TOLSEN Дължина: 200 mm</ime>
+				<broi>2</broi>
+				<cena>1,28</cena>
+				<zadraskanacena>1,83</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>2,57</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2346</productid>
+				<kod>ТЛС44911</kod>
+				<ime>Магнит за заваряване 22 KG</ime>
+				<broi>2</broi>
+				<cena>2,68</cena>
+				<zadraskanacena>3,83</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>5,37</stoinostbezdds>
+			</product>
+			<product>
+				<productid>1809</productid>
+				<kod>ТЛС25053</kod>
+				<ime>Брадва с фибърглас дръжка 600 g</ime>
+				<broi>1</broi>
+				<cena>4,61</cena>
+				<zadraskanacena>6,58</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>4,61</stoinostbezdds>
+			</product>
+			<product>
+				<productid>5945</productid>
+				<kod>ТЛС38058</kod>
+				<ime>Клещи кримпващи с тресчотка TOLSEN </ime>
+				<broi>2</broi>
+				<cena>9,22</cena>
+				<zadraskanacena>13,17</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>18,44</stoinostbezdds>
+			</product>
+			<product>
+				<productid>10025</productid>
+				<kod>ПРО40136</kod>
+				<ime>Свредел за почва Ø75х450 mm</ime>
+				<broi>2</broi>
+				<cena>4,78</cena>
+				<zadraskanacena>6,83</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>9,57</stoinostbezdds>
+			</product>
+			<product>
+				<productid>3481</productid>
+				<kod>ТЛС62243</kod>
+				<ime>Обтегачи 2 бр. Ø 7 х 900 mm TOLSEN </ime>
+				<broi>3</broi>
+				<cena>1,05</cena>
+				<zadraskanacena>1,50</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>3,14</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2222</productid>
+				<kod>ТЛС10101</kod>
+				<ime>Клещи револверни TOLSEN TOLSEN Дължина 220 mm</ime>
+				<broi>3</broi>
+				<cena>2,68</cena>
+				<zadraskanacena>3,83</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>8,05</stoinostbezdds>
+			</product>
+			<product>
+				<productid>1540</productid>
+				<kod>ТЛС38016</kod>
+				<ime>Комплект отвертки изолирани 1000 V 13 части TOLSEN </ime>
+				<broi>2</broi>
+				<cena>13,94</cena>
+				<zadraskanacena>19,92</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>27,89</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2346</productid>
+				<kod>ТЛС44911</kod>
+				<ime>Магнит за заваряване 22 KG</ime>
+				<broi>2</broi>
+				<cena>2,68</cena>
+				<zadraskanacena>3,83</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>5,37</stoinostbezdds>
+			</product>
+			<product>
+				<productid>2356</productid>
+				<kod>ТЛС76757</kod>
+				<ime>Диамантен диск Ultraslim Longlife 2, 125x10 мм </ime>
+				<broi>3</broi>
+				<cena>5,19</cena>
+				<zadraskanacena>7,42</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>15,58</stoinostbezdds>
+			</product>
+			<product>
+				<productid>5921</productid>
+				<kod>ТЛС62266</kod>
+				<ime>Сапан 1т х 1м</ime>
+				<broi>2</broi>
+				<cena>1,87</cena>
+				<zadraskanacena>2,67</zadraskanacena>
+				<otstapka>30</otstapka>
+				<stoinostbezdds>3,73</stoinostbezdds>
+			</product>
+		</products>
+		<ime>ПЕТЪР ИВАНОВ</ime>
+		<firma>БАШ МАЙСТОРА ООД</firma>
+		<email>m.ivanova@bashmajstora.com</email>
+		<grad>ВАРНА</grad>
+		<telephone>0886194395</telephone>
+		<eik>201828014</eik>
+		<dds>BG201828014</dds>
+		<adres>ул.Струга №23, ет. 2, ап.208</adres>
+		<deliveryime>Мая Иванова</deliveryime>
+		<deliverygrad>Варна</deliverygrad>
+		<deliveryadres>Атанас Москов 17</deliveryadres>
+		<deliverytel>0886194395</deliverytel>
+	</order>
+</orders>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CreateSaleResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SaleId>09150000000016</SaleId>
+  <SaleNo>13210</SaleNo>
+  <ClientId>09150000000017</ClientId>
+  <ClientAgentId>09150000000018</ClientAgentId>
+  <ClientCreated>true</ClientCreated>
+  <ClientAgentCreated>true</ClientAgentCreated>
+  <TotalWithoutVat>153.42</TotalWithoutVat>
+  <Vat>30.684</Vat>
+  <TotalWithVat>184.104</TotalWithVat>
+  <DetailCount>14</DetailCount>
+  <DetailIds>
+    <string>09150000000019</string>
+    <string>09150000000020</string>
+    <string>09150000000021</string>
+    <string>09150000000022</string>
+    <string>09150000000023</string>
+    <string>09150000000024</string>
+    <string>09150000000025</string>
+    <string>09150000000026</string>
+    <string>09150000000027</string>
+    <string>09150000000028</string>
+    <string>09150000000029</string>
+    <string>09150000000030</string>
+    <string>09150000000031</string>
+    <string>09150000000032</string>
+  </DetailIds>
+</CreateSaleResponse>

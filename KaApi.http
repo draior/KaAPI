@@ -1,0 +1,132 @@
+@KaApi_HostAddress = http://localhost:5001
+
+POST {{KaApi_HostAddress}}/api/sales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "saleNo": "TEST-1001",
+  "saleDate": "2026-07-15T10:00:00",
+  "saleTypeId": 4,
+  "businessGroupId": "90",
+  "userId": "00SYSTEM10",
+  "currencyId": "SYSTEM",
+  "comment": "Inserted from KaApi",
+  "client": {
+    "code": "0120309999",
+    "name": "Example Client Ltd",
+    "taxNo": "BG999999999",
+    "bulstat": "999999999",
+    "address": "Sample address 1",
+    "phone": "0888000000",
+    "email": "client@example.com",
+    "clientTypeId": "VK03",
+    "agent": {
+      "name": "Ivan Petrov",
+      "cellPhone": "0888111222",
+      "email": "ivan.petrov@example.com"
+    }
+  },
+  "details": [
+    {
+      "code": "ITEM-1",
+      "name": "Sample item",
+      "quantity": 2,
+      "singlePrice": 12.5,
+      "discount": 0,
+      "vat": 5
+    }
+  ]
+}
+
+###
+
+POST {{KaApi_HostAddress}}/api/sales
+Content-Type: application/xml
+Accept: application/xml
+
+<SaleRequest>
+  <SaleNo>TEST-1002</SaleNo>
+  <SaleDate>2026-07-15T10:15:00</SaleDate>
+  <SaleTypeId>3</SaleTypeId>
+  <BusinessGroupId>09</BusinessGroupId>
+  <UserId>00SYSTEM10</UserId>
+  <CurrencyId>SYSTEM</CurrencyId>
+  <Comment>Inserted from XML</Comment>
+  <Client>
+    <Code>0120309998</Code>
+    <Name>Example XML Client Ltd</Name>
+    <TaxNo>BG999999998</TaxNo>
+    <Bulstat>999999998</Bulstat>
+    <Address>Sample address 2</Address>
+    <Phone>0888999999</Phone>
+    <Email>xmlclient@example.com</Email>
+    <ClientTypeId>VK03</ClientTypeId>
+    <Agent>
+      <Name>Maria Petrova</Name>
+      <CellPhone>0888444555</CellPhone>
+      <Email>maria.petrova@example.com</Email>
+    </Agent>
+  </Client>
+  <Details>
+    <Detail>
+      <Code>ITEM-XML-1</Code>
+      <Name>XML item</Name>
+      <Quantity>1</Quantity>
+      <SinglePrice>20</SinglePrice>
+      <Discount>0</Discount>
+      <Vat>4</Vat>
+    </Detail>
+  </Details>
+</SaleRequest>
+
+###
+
+POST {{KaApi_HostAddress}}/api/sales/import-order-xml
+Content-Type: application/xml
+Accept: application/json
+
+<transaction>
+  <id>ORDER-XML-1001</id>
+  <transaction-date>2026-07-15T12:30:00</transaction-date>
+  <transaction-number>12345</transaction-number>
+  <till-id>09</till-id>
+  <operator-id>00SYSTEM10</operator-id>
+  <currency>SYSTEM</currency>
+  <comment>Imported from TCPOS template</comment>
+  <customer>
+    <card-number>0120307777</card-number>
+    <description>Template Client Ltd</description>
+    <fiscal-vat-number>BG777777777</fiscal-vat-number>
+    <fiscal-code>777777777</fiscal-code>
+    <street>Sample street 7</street>
+    <city>Dobrich</city>
+    <country>BG</country>
+    <phone>0888123456</phone>
+    <email>template.client@example.com</email>
+    <contact-name>Petar Ivanov</contact-name>
+    <cell-phone>0888654321</cell-phone>
+  </customer>
+  <trans-item type="article">
+    <article-id>09121207000014</article-id>
+    <code>ЕРБ03131</code>
+    <description>МИНИ НОЖОВКА PROFI</description>
+    <quantity>2</quantity>
+    <price>12.5</price>
+    <taxable-amount>25</taxable-amount>
+    <vat-percent>20</vat-percent>
+    <vat-amount>5</vat-amount>
+    <total-price>30</total-price>
+  </trans-item>
+  <trans-item type="article">
+    <article-id>09140219000019</article-id>
+    <code>ПРО32206</code>
+    <description>СТЪКЛОРЕЗ</description>
+    <quantity-description>1 pcs</quantity-description>
+    <price>20</price>
+    <taxable-amount>20</taxable-amount>
+    <vat-percent>20</vat-percent>
+    <vat-amount>4</vat-amount>
+    <total-price>24</total-price>
+  </trans-item>
+</transaction>

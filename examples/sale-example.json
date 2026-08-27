@@ -1,0 +1,45 @@
+{
+  "saleNo": "TEST-1001",
+  "saleDate": "2026-07-15T10:00:00",
+  "saleTypeId": 3,
+  "businessGroupId": "09",
+  "userId": "00SYSTEM10",
+  "currencyId": "SYSTEM",
+  "currencyRate": 1,
+  "comment": "Inserted from KaApi JSON example",
+  "client": {
+    "code": "0120309999",
+    "name": "Example Client Ltd",
+    "taxNo": "BG999999999",
+    "bulstat": "999999999",
+    "address": "Sample address 1",
+    "phone": "0888000000",
+    "email": "client@example.com",
+    "clientTypeId": "VK03",
+    "agent": {
+      "name": "Ivan Petrov",
+      "cellPhone": "0888111222",
+      "email": "ivan.petrov@example.com"
+    }
+  },
+  "details": [
+    {
+      "code": "ITEM-1",
+      "name": "Sample item",
+      "nameLatin": "Sample item",
+      "quantity": 2,
+      "singlePrice": 12.5,
+      "discount": 0,
+      "vat": 5
+    },
+    {
+      "code": "ITEM-2",
+      "name": "Second item",
+      "nameLatin": "Second item",
+      "quantity": 1,
+      "singlePrice": 20,
+      "discount": 0,
+      "vat": 4
+    }
+  ]
+}

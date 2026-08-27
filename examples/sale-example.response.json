@@ -1,0 +1,16 @@
+{
+  "saleId": "09150000000001",
+  "saleNo": "TEST-1001",
+  "clientId": "09150000000002",
+  "clientAgentId": "09150000000003",
+  "clientCreated": true,
+  "clientAgentCreated": true,
+  "totalWithoutVat": 45.0,
+  "vat": 9.0,
+  "totalWithVat": 54.0,
+  "detailCount": 2,
+  "detailIds": [
+    "09150000000004",
+    "09150000000005"
+  ]
+}

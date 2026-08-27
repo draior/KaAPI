@@ -1,0 +1,44 @@
+<transaction>
+  <id>ORDER-XML-1001</id>
+  <transaction-date>2026-07-15T12:30:00</transaction-date>
+  <transaction-number>12345</transaction-number>
+  <till-id>09</till-id>
+  <operator-id>00SYSTEM10</operator-id>
+  <currency>SYSTEM</currency>
+  <comment>Imported from TCPOS template</comment>
+  <customer>
+    <card-number>0120307777</card-number>
+    <description>Template Client Ltd</description>
+    <fiscal-vat-number>BG777777777</fiscal-vat-number>
+    <fiscal-code>777777777</fiscal-code>
+    <street>Sample street 7</street>
+    <city>Dobrich</city>
+    <country>BG</country>
+    <phone>0888123456</phone>
+    <email>template.client@example.com</email>
+    <contact-name>Petar Ivanov</contact-name>
+    <cell-phone>0888654321</cell-phone>
+  </customer>
+  <trans-item type="article">
+    <article-id>09121207000014</article-id>
+    <code>ЕРБ03131</code>
+    <description>МИНИ НОЖОВКА PROFI</description>
+    <quantity>2</quantity>
+    <price>12.5</price>
+    <taxable-amount>25</taxable-amount>
+    <vat-percent>20</vat-percent>
+    <vat-amount>5</vat-amount>
+    <total-price>30</total-price>
+  </trans-item>
+  <trans-item type="article">
+    <article-id>09140219000019</article-id>
+    <code>ПРО32206</code>
+    <description>СТЪКЛОРЕЗ</description>
+    <quantity-description>1 pcs</quantity-description>
+    <price>20</price>
+    <taxable-amount>20</taxable-amount>
+    <vat-percent>20</vat-percent>
+    <vat-amount>4</vat-amount>
+    <total-price>24</total-price>
+  </trans-item>
+</transaction>

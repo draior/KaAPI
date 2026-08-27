@@ -1,0 +1,45 @@
+<SaleRequest>
+  <SaleNo>TEST-1002</SaleNo>
+  <SaleDate>2026-07-15T10:15:00</SaleDate>
+  <SaleTypeId>3</SaleTypeId>
+  <BusinessGroupId>09</BusinessGroupId>
+  <UserId>00SYSTEM10</UserId>
+  <CurrencyId>SYSTEM</CurrencyId>
+  <CurrencyRate>1</CurrencyRate>
+  <Comment>Inserted from KaApi XML example</Comment>
+  <Client>
+    <Code>0120309998</Code>
+    <Name>Example XML Client Ltd</Name>
+    <TaxNo>BG999999998</TaxNo>
+    <Bulstat>999999998</Bulstat>
+    <Address>Sample address 2</Address>
+    <Phone>0888999999</Phone>
+    <Email>xmlclient@example.com</Email>
+    <ClientTypeId>VK03</ClientTypeId>
+    <Agent>
+      <Name>Maria Petrova</Name>
+      <CellPhone>0888444555</CellPhone>
+      <Email>maria.petrova@example.com</Email>
+    </Agent>
+  </Client>
+  <Details>
+    <Detail>
+      <Code>ITEM-XML-1</Code>
+      <Name>XML item</Name>
+      <NameLatin>XML item</NameLatin>
+      <Quantity>1</Quantity>
+      <SinglePrice>20</SinglePrice>
+      <Discount>0</Discount>
+      <Vat>4</Vat>
+    </Detail>
+    <Detail>
+      <Code>ITEM-XML-2</Code>
+      <Name>XML second item</Name>
+      <NameLatin>XML second item</NameLatin>
+      <Quantity>2</Quantity>
+      <SinglePrice>12.5</SinglePrice>
+      <Discount>0</Discount>
+      <Vat>5</Vat>
+    </Detail>
+  </Details>
+</SaleRequest>
