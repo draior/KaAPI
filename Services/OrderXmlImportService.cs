@@ -390,10 +390,10 @@ public partial class OrderXmlImportService(
             Name = ChildValue(item, "description", "name"),
             NameLatin = ChildValue(item, "description", "name"),
             Quantity = RoundToDouble(quantity),
-            SinglePrice = RoundToDouble(unitPrice.Value),
-            SourceSinglePrice = explicitUnitPrice.HasValue ? RoundToDouble(explicitUnitPrice.Value) : RoundToDouble(unitPrice.Value),
+            SinglePrice = RoundMoneyToDouble(unitPrice.Value),
+            SourceSinglePrice = explicitUnitPrice.HasValue ? RoundMoneyToDouble(explicitUnitPrice.Value) : RoundMoneyToDouble(unitPrice.Value),
             Discount = RoundToDouble(discountPercent),
-            Vat = RoundToDouble(vatAmount.Value),
+            Vat = RoundMoneyToDouble(vatAmount.Value),
             CodeEan = ChildValue(item, "barcode")
         };
     }
@@ -422,7 +422,7 @@ public partial class OrderXmlImportService(
         {
             baseUnitPrice = quantity == 0
                 ? discountedUnitPrice
-                : Math.Round((netLineTotal / quantity) / (1 - (discountPercent.Value / 100m)), 4, MidpointRounding.AwayFromZero);
+                : Math.Round((netLineTotal / quantity) / (1 - (discountPercent.Value / 100m)), 2, MidpointRounding.AwayFromZero);
         }
 
         return new SaleDetailUpsertRequest
@@ -431,8 +431,8 @@ public partial class OrderXmlImportService(
             Name = ChildValue(product, "ime"),
             NameLatin = ChildValue(product, "ime"),
             Quantity = RoundToDouble(quantity),
-            SinglePrice = RoundToDouble(baseUnitPrice),
-            SourceSinglePrice = RoundToDouble(discountedUnitPrice),
+            SinglePrice = RoundMoneyToDouble(baseUnitPrice),
+            SourceSinglePrice = RoundMoneyToDouble(discountedUnitPrice),
             Discount = RoundToDouble(discountPercentValue),
             Vat = 0d
         };
@@ -789,6 +789,11 @@ public partial class OrderXmlImportService(
     private static double RoundToDouble(decimal value)
     {
         return Math.Round((double)value, 3, MidpointRounding.AwayFromZero);
+    }
+
+    private static double RoundMoneyToDouble(decimal value)
+    {
+        return Math.Round((double)value, 2, MidpointRounding.AwayFromZero);
     }
 
     [GeneratedRegex(@"^-?\d+([.,]\d+)?", RegexOptions.Compiled)]

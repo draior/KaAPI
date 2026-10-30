@@ -17,6 +17,8 @@ public sealed class RuntimeFilePaths
 
     public string TraceDirectoryPath => Path.Combine(_options.RootPath, _options.TraceFolderName);
 
+    public int TraceRetentionDays => Math.Max(0, _options.TraceRetentionDays);
+
     public string TraceFilePath => GetTraceFilePath(StartedAt);
 
     public string PayloadRootPath => Path.Combine(_options.RootPath, _options.PayloadFolderName);

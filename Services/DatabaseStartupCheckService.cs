@@ -11,7 +11,11 @@ public class DatabaseStartupCheckService(
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Validating SQL connection during application startup.");
+        var connectionSettings = new SqlConnectionStringBuilder(_connectionString);
+        logger.LogInformation(
+            "Validating SQL connection during application startup. DatabaseServer={DatabaseServer}, DatabaseName={DatabaseName}",
+            connectionSettings.DataSource,
+            connectionSettings.InitialCatalog);
 
         await using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync(cancellationToken);
@@ -19,7 +23,11 @@ public class DatabaseStartupCheckService(
         await using var command = new SqlCommand("SELECT 1", connection);
         await command.ExecuteScalarAsync(cancellationToken);
 
-        logger.LogInformation("SQL connection validated successfully.");
+        logger.LogInformation(
+            "SQL connection validated successfully. IsConnected={IsConnected}, DatabaseServer={DatabaseServer}, DatabaseName={DatabaseName}",
+            connection.State == System.Data.ConnectionState.Open,
+            connectionSettings.DataSource,
+            connectionSettings.InitialCatalog);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

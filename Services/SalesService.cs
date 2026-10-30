@@ -9,6 +9,7 @@ public class SalesService(
     ILogger<SalesService> logger) : ISalesService
 {
     private const string NextIdProcedureName = "dbo.SYS_GETNEXTID";
+    private static readonly EventId SaleHeaderLogEvent = new(1000, "SaleHeader");
 
     private const string SalesInsertSql = """
         INSERT INTO SALES
@@ -17,7 +18,7 @@ public class SalesService(
             PRICE, DISCOUNT, TOTALPRICE, PAYEDSUM, DEADLINE, PAYSTATUS_ID, DOCSTATUS_ID,
             VAT, TOTALVAT, CURRENCY_ID, CURRENCYVALUE, CURRENCYRATE, PAYEDCURRENCY,
             C_BUSINESSGROUP_ID, C_USER_ID, DISCOUNTSUM, CVWITHOUTVAT,
-            CLIENTAGENT_ID, DESIGNER_ID, CONTRACTNO, CONTRACTDATE, UNP
+            CLIENTAGENT_ID, DESIGNER_ID, CONTRACTNO, CONTRACTDATE, UNP, COMMENT
         )
         VALUES
         (
@@ -25,7 +26,7 @@ public class SalesService(
             @PRICE, @DISCOUNT, @TOTALPRICE, @PAYEDSUM, @DEADLINE, @PAYSTATUS_ID, @DOCSTATUS_ID,
             @VAT, @TOTALVAT, @CURRENCY_ID, @CURRENCYVALUE, @CURRENCYRATE, @PAYEDCURRENCY,
             @C_BUSINESSGROUP_ID, @C_USER_ID, @DISCOUNTSUM, @CVWITHOUTVAT,
-            @CLIENTAGENT_ID, @DESIGNER_ID, @CONTRACTNO, @CONTRACTDATE, @UNP
+            @CLIENTAGENT_ID, @DESIGNER_ID, @CONTRACTNO, @CONTRACTDATE, @UNP, @COMMENT
         );
         """;
 
@@ -59,7 +60,8 @@ public class SalesService(
             DESIGNER_ID = @DESIGNER_ID,
             CONTRACTNO = @CONTRACTNO,
             CONTRACTDATE = @CONTRACTDATE,
-            UNP = @UNP
+            UNP = @UNP,
+            COMMENT = @COMMENT
         WHERE ID = @ID;
         """;
 
@@ -224,11 +226,13 @@ public class SalesService(
         }
 
         var saleDate = request.SaleDate ?? DateTime.Now;
+        var initialTotal = RoundMoney(request.Details.Sum(static detail => GetDetailNetTotal(detail)));
         _logger.LogInformation(
-            "Starting sale import. SaleNo={SaleNo}, RequestedSaleId={RequestedSaleId}, ClientId={ClientId}, DetailCount={DetailCount}",
+            SaleHeaderLogEvent,
+            "Starting sale import. SaleNo={SaleNo}, SaleDate={SaleDate:yyyy-MM-dd}, Total={Total}, DetailCount={DetailCount}",
             request.SaleNo,
-            request.Id,
-            request.ClientId ?? request.Client?.Code ?? request.Client?.TaxNo ?? request.Client?.Bulstat,
+            saleDate,
+            initialTotal,
             request.Details.Count);
 
         await using var connection = new SqlConnection(_connectionString);
@@ -307,19 +311,23 @@ public class SalesService(
                 clientInfo.ClientCreated,
                 clientInfo.ClientAgentCreated);
 
+            var missingArticleComments = new List<string>();
             var preparedDetails = await PrepareSaleDetailsAsync(
                 connection,
                 (SqlTransaction)transaction,
                 request.Details,
+                missingArticleComments,
                 cancellationToken);
+            AppendComment(request, missingArticleComments);
             _logger.LogInformation(
-                "Prepared sale details. SaleId={SaleId}, DetailCount={DetailCount}",
+                "Prepared sale details. SaleId={SaleId}, DetailCount={DetailCount}, MissingArticleCount={MissingArticleCount}",
                 saleId,
-                preparedDetails.Count);
+                preparedDetails.Count,
+                missingArticleComments.Count);
 
-            var totalWithoutVat = preparedDetails.Sum(static prepared => prepared.NetTotal);
-            var totalVat = preparedDetails.Sum(static prepared => prepared.VatTotal);
-            var totalWithVat = preparedDetails.Sum(static prepared => prepared.TotalWithVat);
+            var totalWithoutVat = RoundMoney(preparedDetails.Sum(static prepared => prepared.NetTotal));
+            var totalVat = RoundMoney(preparedDetails.Sum(static prepared => prepared.RawVatTotal));
+            var totalWithVat = RoundMoney(totalWithoutVat + totalVat);
             var discountSum = preparedDetails.Sum(static prepared => prepared.Detail.Discount);
             _logger.LogInformation(
                 "Calculated in-memory totals before persistence. SaleId={SaleId}, NetTotal={NetTotal}, Vat={Vat}, TotalWithVat={TotalWithVat}, DiscountPercentSum={DiscountPercentSum}",
@@ -375,18 +383,13 @@ public class SalesService(
                     preparedDetail.TotalWithVat);
             }
 
-            var saleTotals = await LoadSaleTotalsAsync(
-                connection,
-                (SqlTransaction)transaction,
-                saleId,
-                cancellationToken);
             _logger.LogInformation(
-                "Loaded persisted sale totals from SALEDETAIL. SaleId={SaleId}, NetTotal={NetTotal}, Vat={Vat}, TotalWithVat={TotalWithVat}, DiscountAmount={DiscountAmount}",
+                "Using calculated sale totals. SaleId={SaleId}, NetTotal={NetTotal}, Vat={Vat}, TotalWithVat={TotalWithVat}, DiscountAmount={DiscountAmount}",
                 saleId,
-                saleTotals.TotalWithoutVat,
-                saleTotals.Vat,
-                saleTotals.TotalWithVat,
-                saleTotals.DiscountSum);
+                totalWithoutVat,
+                totalVat,
+                totalWithVat,
+                discountSum);
 
             await SaveSaleAsync(
                 connection,
@@ -396,12 +399,12 @@ public class SalesService(
                 true,
                 saleId,
                 saleDate,
-                saleTotals.TotalWithoutVat,
-                saleTotals.Vat,
-                saleTotals.TotalWithVat,
-                saleTotals.DiscountSum,
+                totalWithoutVat,
+                totalVat,
+                totalWithVat,
+                discountSum,
                 cancellationToken);
-            _logger.LogInformation("Updated sale header from persisted detail totals. SaleId={SaleId}", saleId);
+            _logger.LogInformation("Updated sale header from calculated totals. SaleId={SaleId}", saleId);
 
             await transaction.CommitAsync(cancellationToken);
             _logger.LogInformation(
@@ -418,9 +421,9 @@ public class SalesService(
                 ClientAgentId = clientInfo.ClientAgentId,
                 ClientCreated = clientInfo.ClientCreated,
                 ClientAgentCreated = clientInfo.ClientAgentCreated,
-                TotalWithoutVat = saleTotals.TotalWithoutVat,
-                Vat = saleTotals.Vat,
-                TotalWithVat = saleTotals.TotalWithVat,
+                TotalWithoutVat = totalWithoutVat,
+                Vat = totalVat,
+                TotalWithVat = totalWithVat,
                 DetailCount = detailIds.Count,
                 DetailIds = detailIds
             };
@@ -483,6 +486,7 @@ public class SalesService(
         command.Parameters.AddWithValue("@CONTRACTNO", DbValue(request.ContractNo));
         command.Parameters.AddWithValue("@CONTRACTDATE", DbValue(request.ContractDate ?? saleDate));
         command.Parameters.AddWithValue("@UNP", DbValue(request.Unp));
+        command.Parameters.AddWithValue("@COMMENT", DbValue(request.Comment));
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -851,6 +855,7 @@ public class SalesService(
         SqlConnection connection,
         SqlTransaction transaction,
         IReadOnlyCollection<SaleDetailUpsertRequest> details,
+        ICollection<string> missingArticleComments,
         CancellationToken cancellationToken)
     {
         var preparedDetails = new List<PreparedSaleDetail>(details.Count);
@@ -858,16 +863,26 @@ public class SalesService(
         foreach (var detail in details)
         {
             var article = await ResolveArticleAsync(connection, transaction, detail, cancellationToken);
+            if (article is null)
+            {
+                var comment = $"Article with code {detail.Code?.Trim()} not found, quantity {detail.Quantity}";
+                missingArticleComments.Add(comment);
+                _logger.LogError("{MissingArticleComment}", comment);
+                continue;
+            }
+
             var netTotal = GetDetailNetTotal(detail);
-            var vatTotal = GetDetailVatTotal(netTotal, article.VatPercentValue);
+            var rawVatTotal = GetDetailVatTotal(netTotal, article.VatPercentValue);
+            var vatTotal = RoundMoney(rawVatTotal);
 
             preparedDetails.Add(new PreparedSaleDetail
             {
                 Detail = detail,
                 Article = article,
                 NetTotal = netTotal,
+                RawVatTotal = rawVatTotal,
                 VatTotal = vatTotal,
-                TotalWithVat = netTotal + vatTotal
+                TotalWithVat = RoundMoney(netTotal + vatTotal)
             });
 
             _logger.LogInformation(
@@ -880,7 +895,7 @@ public class SalesService(
                 article.VatPercentValue,
                 netTotal,
                 vatTotal,
-                netTotal + vatTotal);
+                RoundMoney(netTotal + vatTotal));
         }
 
         return preparedDetails
@@ -921,7 +936,7 @@ public class SalesService(
         command.Parameters.AddWithValue("@MATERIAL_E", DbValue(article.MaterialE));
         command.Parameters.AddWithValue("@SHORTDESCR_B", DbValue(article.ShortDescrB));
         command.Parameters.AddWithValue("@SHORTDESCR_E", DbValue(article.ShortDescrE));
-        command.Parameters.AddWithValue("@CATALOGPRICE", DbValue(article.SalePrice));
+        command.Parameters.AddWithValue("@CATALOGPRICE", detail.SinglePrice);
         command.Parameters.AddWithValue("@QUANTITY", detail.Quantity);
         command.Parameters.AddWithValue("@QUANTITYGET", 0d);
         command.Parameters.AddWithValue("@QUANTITYRETURN", 0d);
@@ -945,7 +960,7 @@ public class SalesService(
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private static async Task<ArticleLookupResult> ResolveArticleAsync(
+    private static async Task<ArticleLookupResult?> ResolveArticleAsync(
         SqlConnection connection,
         SqlTransaction transaction,
         SaleDetailUpsertRequest detail,
@@ -963,7 +978,7 @@ public class SalesService(
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
         {
-            throw new InvalidOperationException($"Article with code '{code}' was not found in ARTICLE.");
+            return null;
         }
 
         return new ArticleLookupResult
@@ -991,22 +1006,19 @@ public class SalesService(
 
     private static double GetDetailNetTotal(SaleDetailUpsertRequest detail)
     {
-        return Math.Round(GetDetailGrossTotal(detail) - GetDetailDiscountAmount(detail), 3, MidpointRounding.AwayFromZero);
+        var discountedUnitPrice = GetDetailDiscountedUnitPrice(detail);
+        return RoundMoney(detail.Quantity * discountedUnitPrice);
     }
 
-    private static double GetDetailGrossTotal(SaleDetailUpsertRequest detail)
+    private static double GetDetailDiscountedUnitPrice(SaleDetailUpsertRequest detail)
     {
-        return Math.Round(detail.Quantity * detail.SinglePrice, 3, MidpointRounding.AwayFromZero);
-    }
-
-    private static double GetDetailDiscountAmount(SaleDetailUpsertRequest detail)
-    {
+        var unitPrice = RoundMoney(detail.SinglePrice);
         if (detail.Discount <= 0)
         {
-            return 0d;
+            return unitPrice;
         }
 
-        return Math.Round(GetDetailGrossTotal(detail) * (detail.Discount / 100d), 3, MidpointRounding.AwayFromZero);
+        return RoundMoney(unitPrice * (1d - (detail.Discount / 100d)));
     }
 
     private static double GetDetailVatTotal(double netTotal, double? vatPercentValue)
@@ -1016,7 +1028,24 @@ public class SalesService(
             return 0d;
         }
 
-        return Math.Round(netTotal * (vatPercentValue.Value / 100d), 3, MidpointRounding.AwayFromZero);
+        return netTotal * (vatPercentValue.Value / 100d);
+    }
+
+    private static double RoundMoney(double value)
+    {
+        return Math.Round(value, 2, MidpointRounding.AwayFromZero);
+    }
+
+    private static void AppendComment(SaleUpsertRequest request, IEnumerable<string> comments)
+    {
+        var combined = comments
+            .Where(static comment => !string.IsNullOrWhiteSpace(comment))
+            .Select(static comment => comment!.Trim())
+            .ToList();
+
+        request.Comment = combined.Count == 0
+            ? null
+            : string.Join(Environment.NewLine, combined);
     }
 
     private static string? NormalizeId(string? value)
@@ -1155,6 +1184,8 @@ public class SalesService(
         public ArticleLookupResult Article { get; set; } = new();
 
         public double NetTotal { get; set; }
+
+        public double RawVatTotal { get; set; }
 
         public double VatTotal { get; set; }
 

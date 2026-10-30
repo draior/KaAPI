@@ -8,5 +8,7 @@ public class FileStorageOptions
 
     public string TraceFolderName { get; set; } = "trace";
 
+    public int TraceRetentionDays { get; set; } = 30;
+
     public string PayloadFolderName { get; set; } = "payload";
 }

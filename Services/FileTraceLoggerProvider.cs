@@ -152,6 +152,50 @@ public sealed class FileTraceLoggerProvider : ILoggerProvider
                 AutoFlush = true
             };
             _currentDate = logDate;
+
+            var deletedFileCount = DeleteExpiredTraceFiles(timestamp);
+            if (deletedFileCount > 0)
+            {
+                Write(
+                    timestamp,
+                    LogLevel.Information,
+                    "KaApi.Trace",
+                    new EventId(0, "TraceCleanup"),
+                    $"Deleted {deletedFileCount} trace file(s) older than {_runtimeFilePaths.TraceRetentionDays} days.",
+                    null);
+            }
+        }
+
+        private int DeleteExpiredTraceFiles(DateTime timestamp)
+        {
+            var retentionDays = _runtimeFilePaths.TraceRetentionDays;
+            if (retentionDays <= 0)
+            {
+                return 0;
+            }
+
+            var cutoffDate = timestamp.Date.AddDays(-retentionDays);
+            var deletedFileCount = 0;
+
+            foreach (var traceFilePath in Directory.EnumerateFiles(_runtimeFilePaths.TraceDirectoryPath, "*.log"))
+            {
+                try
+                {
+                    if (File.GetLastWriteTime(traceFilePath) >= cutoffDate)
+                    {
+                        continue;
+                    }
+
+                    File.Delete(traceFilePath);
+                    deletedFileCount++;
+                }
+                catch
+                {
+                    // Do not interrupt logging when an old trace is locked or cannot be deleted.
+                }
+            }
+
+            return deletedFileCount;
         }
 
         private void WriteBanner(DateTime timestamp)

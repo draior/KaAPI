@@ -31,7 +31,7 @@ public class VersionController : ControllerBase
         return new
         {
             name = "KaApi",
-            version = string.IsNullOrWhiteSpace(informationalVersion) ? "1.0.1" : informationalVersion
+            version = string.IsNullOrWhiteSpace(informationalVersion) ? "1.1.1" : informationalVersion
         };
     }
 }
