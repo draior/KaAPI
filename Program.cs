@@ -44,6 +44,8 @@ builder.Services.Configure<FileStorageOptions>(
     builder.Configuration.GetSection(FileStorageOptions.SectionName));
 builder.Services.Configure<StartupOrderActivationOptions>(
     builder.Configuration.GetSection(StartupOrderActivationOptions.SectionName));
+builder.Services.Configure<DatabaseStartupRetryOptions>(
+    builder.Configuration.GetSection(DatabaseStartupRetryOptions.SectionName));
 
 var app = builder.Build();
 
